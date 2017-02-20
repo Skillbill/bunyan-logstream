@@ -29,7 +29,7 @@ App = (function() {
 
       const log = document.getElementById('log');
 
-      if (log.childElementCount > maxLogLine) {
+      while (log.childElementCount > maxLogLine) {
         log.removeChild(log.children[1]);
       }
 
