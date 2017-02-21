@@ -45,29 +45,19 @@ router.post('/bunyan-log', (req, res) => {
   console.log('log received', req.body);
 
   const body = req.body;
-  const bodyMesage = JSON.parse( body.message );
 
-  brodcast({event: 'message', data: {
-    timestamp : bodyMesage['@timestamp'],
-    text : bodyMesage.message,
-    source : bodyMesage.source,
-    level : bodyMesage.level,
-    logname : bodyMesage.name,
-    hostname : bodyMesage.hostname,
-    host : body.host
-  }});
+  brodcast({event: 'message', data: body});
   res.send({});
 });
 
 const brodcast = function(payload) {
-  console.log('broadcasting', JSON.stringify(payload));
   users.forEach((u) => {
     sendTo(u, payload);
   });
 };
 
 var sendTo = function(user, payload) {
-  console.log('sending to', JSON.stringify(payload));
+  console.log('sending to', user, payload);
   if(user) {
     user.res.write("id:" + Math.random() + "\nevent: " + payload.event + "\ndata: " + JSON.stringify(payload.data) + "\n\n");
   }

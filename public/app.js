@@ -39,12 +39,12 @@ App = (function() {
 
 
       appendCell(row, `${m.timestamp}`);
-      appendCell(row, `${m.hostname}`);
+      //appendCell(row, `${m.hostname}`);
       appendCell(row, `${m.host}`);
-      appendCell(row, `${m.source}`);
-      appendCell(row, `${m.logname}`);
+      //appendCell(row, `${m.source}`);
+      //appendCell(row, `${m.logname}`);
       appendCell(row, `${m.level}`);
-      appendCell(row, `${m.text}`);
+      appendCell(row, `${m.body}`);//appendCell(row, `${m.text}`);
 
       document.body.scrollTop = document.body.scrollHeight;
     } else {
