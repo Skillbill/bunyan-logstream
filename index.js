@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const users = [];
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -57,7 +57,6 @@ const brodcast = function(payload) {
 };
 
 var sendTo = function(user, payload) {
-  console.log('sending to', user, payload);
   if(user) {
     user.res.write("id:" + Math.random() + "\nevent: " + payload.event + "\ndata: " + JSON.stringify(payload.data) + "\n\n");
   }

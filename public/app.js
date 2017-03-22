@@ -2,7 +2,16 @@ let maxLogLine = 100;
 let active = true;
 let messageDuringPause = [];
 
-App = (function() {
+const levels = {
+  60: "fatal",
+  50: "error",
+  40: "warn",
+  30: "info",
+  20: "debug",
+  10: "trace"
+};
+
+const App = (function() {
 
   var es = new EventSource('/join');
   es.addEventListener("open", open);
@@ -27,6 +36,8 @@ App = (function() {
 
       const m = JSON.parse(e.data);
 
+      console.log("log", m);
+
       const log = document.getElementById('log');
 
       while (log.childElementCount > maxLogLine) {
@@ -34,17 +45,14 @@ App = (function() {
       }
 
       const row = document.createElement('div');
-      row.className = 'row';
+      row.className = 'row ' + levels[m.level];
       log.appendChild(row);
 
 
-      appendCell(row, `${m.timestamp}`);
-      //appendCell(row, `${m.hostname}`);
-      appendCell(row, `${m.host}`);
-      //appendCell(row, `${m.source}`);
-      //appendCell(row, `${m.logname}`);
-      appendCell(row, `${m.level}`);
-      appendCell(row, `${m.body}`);//appendCell(row, `${m.text}`);
+      appendCell(row, `${m.time}`);
+      appendCell(row, `${m.hostname}`);
+      appendCell(row, `${levels[m.level] || m.level}`);
+      appendCell(row, `${m.msg}`);
 
       document.body.scrollTop = document.body.scrollHeight;
     } else {
@@ -75,7 +83,17 @@ App = (function() {
     maxLines : (lines) => {
       maxLogLine = lines;
     }
-}
-  ;
+  };
 
 })();
+
+const pauseButton = document.querySelector('button.pause');
+pauseButton.addEventListener('click', () => {
+  if(App.isActive()) {
+    App.pause();
+    pauseButton.innerHTML = 'PLAY';
+  } else {
+    App.play();
+    pauseButton.innerHTML = 'PAUSE';
+  }
+});

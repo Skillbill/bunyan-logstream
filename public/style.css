@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: "Helvetica Neue", Helvetica, Arial;
     font-size: 14px;
@@ -11,7 +16,6 @@ body {
 
 .wrapper {
     margin: 0 auto;
-    padding: 40px;
 }
 
 .table {
@@ -30,9 +34,26 @@ body {
     display: table-row;
     background: #f6f6f6;
 }
+
+.row:not(.header):hover, .row:not(.header):nth-of-type(odd):hover {
+    background: #ADE3A7;
+    color: black;
+}
+
 .row:nth-of-type(odd) {
     background: #e9e9e9;
 }
+
+.row.error, .row.fatal {
+    background: rgb(221, 50, 50) none repeat scroll 0% 0%;
+    color: white;
+}
+
+.row.warn {
+    background: #C2BC4F;
+    color: black;
+}
+
 .row.header {
     font-weight: 900;
     color: #ffffff;
@@ -54,10 +75,23 @@ body {
 .cell {
     padding: 6px 12px;
     display: table-cell;
+    word-wrap: break-word;
+    max-width: 60vw;
 }
 @media screen and (max-width: 580px) {
     .cell {
         padding: 2px 12px;
         display: block;
     }
+}
+
+button.pause {
+    position: fixed;
+    bottom: 2px;
+    right: 2px;
+    border: 2px solid #FFF;
+    padding: 4px;
+    cursor: pointer;
+    background: #27AE60;
+    color: white;
 }
