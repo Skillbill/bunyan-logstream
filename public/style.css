@@ -85,13 +85,17 @@ body {
     }
 }
 
-button.pause {
+.actions {
     position: fixed;
     bottom: 2px;
     right: 2px;
+}
+
+button, select {
     border: 2px solid #FFF;
     padding: 4px;
     cursor: pointer;
     background: #27AE60;
     color: white;
 }
+

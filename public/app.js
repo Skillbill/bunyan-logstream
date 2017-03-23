@@ -1,14 +1,15 @@
 let maxLogLine = 100;
 let active = true;
 let messageDuringPause = [];
+let levelFilter = null;
 
 const levels = {
-  60: "fatal",
-  50: "error",
-  40: "warn",
-  30: "info",
+  10: "trace",
   20: "debug",
-  10: "trace"
+  30: "info",
+  40: "warn",
+  50: "error",
+  60: "fatal"
 };
 
 const App = (function() {
@@ -21,7 +22,9 @@ const App = (function() {
   const appendCell = (row, content) => {
     const cell = document.createElement('div');
     cell.className = 'cell';
-    cell.textContent = content;
+    const cellContent = document.createElement('div');
+    cellContent.textContent = content;
+    cell.appendChild(cellContent);
     row.appendChild(cell);
   };
 
@@ -37,6 +40,10 @@ const App = (function() {
       const m = JSON.parse(e.data);
 
       console.log("log", m);
+
+      if(levelFilter && m.level < levelFilter) {
+        return;
+      }
 
       const log = document.getElementById('log');
 
@@ -57,6 +64,9 @@ const App = (function() {
       document.body.scrollTop = document.body.scrollHeight;
     } else {
       console.log('message skipped. I\'m pased');
+      if(messageDuringPause.length >= maxLogLine) {
+        messageDuringPause.shift();
+      }
       messageDuringPause.push(e);
     }
 
@@ -65,6 +75,30 @@ const App = (function() {
   function error(e) {
     console.error("error", e);
   }
+
+  const pauseButton = document.querySelector('button.pause');
+  pauseButton.addEventListener('click', () => {
+    if(App.isActive()) {
+      App.pause();
+      pauseButton.innerHTML = 'PLAY';
+    } else {
+      App.play();
+      pauseButton.innerHTML = 'PAUSE';
+    }
+  });
+
+  const selectFilter = document.querySelector('select.logtype');
+  for(let level in levels) {
+    var filter = document.createElement('option');
+    filter.innerHTML = levels[level];
+    filter.setAttribute('value', level);
+    selectFilter.appendChild(filter);
+  }
+
+  selectFilter.addEventListener('change', (e) => {
+    levelFilter = selectFilter.options[selectFilter.selectedIndex].value || null;
+    console.log("levelFilter", levelFilter);
+  });
 
   return {
     pause : () => {
@@ -86,14 +120,3 @@ const App = (function() {
   };
 
 })();
-
-const pauseButton = document.querySelector('button.pause');
-pauseButton.addEventListener('click', () => {
-  if(App.isActive()) {
-    App.pause();
-    pauseButton.innerHTML = 'PLAY';
-  } else {
-    App.play();
-    pauseButton.innerHTML = 'PAUSE';
-  }
-});
