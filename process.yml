@@ -1,0 +1,5 @@
+apps:
+  - script: 'index.js'
+    name: 'bunyan-logstream'
+    exec_mode: 'cluster'
+    instances: 1

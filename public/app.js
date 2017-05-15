@@ -99,6 +99,11 @@ const App = (function() {
     levelFilter = selectFilter.options[selectFilter.selectedIndex].value || null;
     console.log("levelFilter", levelFilter);
   });
+  
+  const filesButton = document.querySelector('button.files');
+  filesButton.addEventListener('click', () => {
+    window.open('/files');
+  });
 
   return {
     pause : () => {

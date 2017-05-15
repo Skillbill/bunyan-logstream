@@ -1,15 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const serveIndex = require('serve-index');
+
 const app = express();
 const users = [];
 const port = process.env.PORT || 3000;
+const logDir = process.env.LOG_DIR || '/root/.pm2/logs';
 
 app.use(express.static('public'));
+app.use('/files', serveIndex(logDir, {'icons': true, view: 'details'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 const router = express.Router();
 app.use('/', router);
+
+router.get('/files/:filename', (req, res) => {
+  res.download(`${logDir}/${req.params.filename}`);
+});
 
 router.get('/join', (req, res) => {
 
@@ -41,14 +49,18 @@ router.get('/join', (req, res) => {
 });
 
 router.post('/bunyan-log', (req, res) => {
-
-  console.log('log received', req.body);
-
-  const body = req.body;
-
-  brodcast({event: 'message', data: body});
+  log(req.body);
+  brodcast({event: 'message', data: req.body});
   res.send({});
 });
+
+const log = (body) => {
+  if (body.level >= 50) {
+    console.error(body);
+  } else {
+    console.log(body);
+  }
+}
 
 const brodcast = function(payload) {
   users.forEach((u) => {
@@ -63,7 +75,7 @@ var sendTo = function(user, payload) {
 };
 
 const listener = app.listen(port, function() {
-  console.log(`app listening on port ${listener.address().port}`);
+  console.log(`app listening on port ${listener.address().port}!`); 
 });
 
 //for DOCKER
