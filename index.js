@@ -28,10 +28,14 @@ router.get('/join', (req, res) => {
   });
 
   var user = {
+    userId: req.query.userId,
+    level: 10,
     res: res
   };
 
   users.push(user);
+
+  res.write("id:" + Math.random() + "\nevent: ack\ndata: \n\n");
 
   var keepInterval = setInterval(function() {
     res.write("id:" + Math.random() + "\nevent: keep\ndata: \n\n");
@@ -54,6 +58,15 @@ router.post('/bunyan-log', (req, res) => {
   res.send({});
 });
 
+router.post('/set-level-filter', (req, res) => {
+  users.forEach((user) => {
+    if(user.userId == req.query.userId) {
+      user.level = req.body.level;
+    }
+  });
+  res.send({ok: true});
+});
+
 const log = (body) => {
   if (body.level >= 50) {
     console.error(body);
@@ -64,7 +77,9 @@ const log = (body) => {
 
 const brodcast = function(payload) {
   users.forEach((u) => {
-    sendTo(u, payload);
+    if(payload.data.level >= u.level) {
+      sendTo(u, payload);
+    }
   });
 };
 

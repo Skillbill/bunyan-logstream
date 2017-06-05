@@ -55,9 +55,13 @@ body {
 }
 
 .row.header {
-    font-weight: 900;
-    color: #ffffff;
-    background: #ea6153;
+  font-weight: 900;
+  color: #ffffff;
+  background: #ea6153;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  display: block;
 }
 .row.green {
     background: #27ae60;
@@ -99,3 +103,23 @@ button, select {
     color: white;
 }
 
+body.loading > * {
+  display: none;
+}
+
+body.loading::after {
+  content: "Loading...";
+  color: white;
+}
+
+.row .cell:nth-child(1) {
+  width: 200px;
+}
+
+.row .cell:nth-child(2) {
+  width: 150px;
+}
+
+.row .cell:nth-child(3) {
+  width: 100px;
+}

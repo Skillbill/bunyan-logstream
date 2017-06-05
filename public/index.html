@@ -6,29 +6,30 @@
     <title>Log</title>
     <link rel="stylesheet" href="style.css">
   </head>
-  <body>
+  <body class="loading">
+    <div class="row header green">
+      <div class="cell">
+          Timestamp
+      </div>
+      <div class="cell">
+          Host
+      </div>
+      <div class="cell">
+          Level
+      </div>
+      <div class="cell">
+          Message
+      </div>
+    </div>
     <div class="wrapper">
       <div class="table" id="log">
-        <div class="row header green">
-          <div class="cell">
-              Timestamp
-          </div>
-          <div class="cell">
-              Host
-          </div>
-          <div class="cell">
-              Level
-          </div>
-          <div class="cell">
-              Message
-          </div>
-        </div>
       </div>
     </div>
     <div class="actions">
       <select class="logtype">
       </select>
       <button class="pause">PAUSE</button>
+      <button class="clear">CLEAR</button>
       <button class="files">FILES</button>
     </div>
     <script src="app.js"></script>
