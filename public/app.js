@@ -84,6 +84,7 @@ const App = (function() {
         console.log("levelFilter", levelFilter);
         fetch('/set-level-filter?userId=' + userId, {
           method:'post',
+          credentials: 'include',
           headers: {
             'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json'
