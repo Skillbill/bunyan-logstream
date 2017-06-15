@@ -16,11 +16,6 @@ const levels = {
 
 const App = (function() {
 
-  var es = new EventSource('/join?userId=' + userId);
-  es.addEventListener("open", open);
-  es.addEventListener("error", error);
-  es.addEventListener("message", message);
-
   const appendCell = (row, content) => {
     const cell = document.createElement('div');
     cell.className = 'cell';
@@ -75,14 +70,16 @@ const App = (function() {
   function error(e) {
     console.error("error", e);
   }
-  
-  function setLevelFilter(val) {
+
+
+  const setLevelFilter = (val) => {
+    console.log('setLevelFilter', val);
     if(val in levels) {
       let newVal = parseInt(val, 10);
       if(levelFilter != newVal) {
         levelFilter = newVal;
         console.log("levelFilter", levelFilter);
-        fetch('/set-level-filter?userId=' + userId, {
+        return fetch('/set-level-filter?userId=' + userId, {
           method:'post',
           credentials: 'include',
           headers: {
@@ -154,8 +151,15 @@ const App = (function() {
         logContainer.removeChild(e);
       });
     });
-    
+
   }
+
+  setLevelFilter(10).then(() => {
+      var es = new EventSource('/join?userId=' + userId);
+      es.addEventListener("open", open);
+      es.addEventListener("error", error);
+      es.addEventListener("message", message);
+  });
 
   return {
     pause : () => {

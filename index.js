@@ -1,25 +1,46 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const serveIndex = require('serve-index');
+const basicAuth = require('express-basic-auth');
 
-const app = express();
+const interfaceApp = express();
+const logApp = express();
 const users = [];
-const port = process.env.PORT || 3000;
+const appPort = process.env.APP_PORT || 3000;
+const logPort = process.env.LOG_PORT || 3001;
 const logDir = process.env.LOG_DIR || '/root/.pm2/logs';
+const user = process.env.USER;
 
-app.use(express.static('public'));
-app.use('/files', serveIndex(logDir, {'icons': true, view: 'details'}));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+if (user) {
+    let users = {};
+    users[user.split('|')[0]] = user.split('|')[1];
+    //console.log(users);
+    interfaceApp.use(basicAuth({
+        users,
+        challenge: true,
+        realm: 'Log'
+    }));
+}
 
-const router = express.Router();
-app.use('/', router);
+interfaceApp.use(express.static('public'));
+interfaceApp.use('/files', serveIndex(logDir, {'icons': true, view: 'details'}));
+interfaceApp.use(bodyParser.json());
+interfaceApp.use(bodyParser.urlencoded({extended: false}));
+logApp.use(bodyParser.json());
+logApp.use(bodyParser.urlencoded({extended: false}));
 
-router.get('/files/:filename', (req, res) => {
+
+const interfaceRouter = express.Router();
+const logRouter = express.Router();
+
+interfaceApp.use('/', interfaceRouter);
+logApp.use('/', logRouter);
+
+interfaceRouter.get('/files/:filename', (req, res) => {
   res.download(`${logDir}/${req.params.filename}`);
 });
 
-router.get('/join', (req, res) => {
+interfaceRouter.get('/join', (req, res) => {
 
   res.writeHead(200, {
     'Connection': 'keep-alive',
@@ -52,13 +73,13 @@ router.get('/join', (req, res) => {
 
 });
 
-router.post('/bunyan-log', (req, res) => {
+logRouter.post('/bunyan-log', (req, res) => {
   log(req.body);
   brodcast({event: 'message', data: req.body});
   res.send({});
 });
 
-router.post('/set-level-filter', (req, res) => {
+interfaceRouter.post('/set-level-filter', (req, res) => {
   users.forEach((user) => {
     if(user.userId == req.query.userId) {
       user.level = req.body.level;
@@ -89,8 +110,11 @@ var sendTo = function(user, payload) {
   }
 };
 
-const listener = app.listen(port, function() {
-  console.log(`app listening on port ${listener.address().port}!`); 
+const appListener = interfaceApp.listen(appPort, function() {
+  console.log(`app listening on port ${appListener.address().port}!`);
+});
+const logListener = logApp.listen(logPort, function() {
+    console.log(`log listening on port ${logListener.address().port}!`);
 });
 
 //for DOCKER
