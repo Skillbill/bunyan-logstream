@@ -6,8 +6,8 @@ const basicAuth = require('express-basic-auth');
 const interfaceApp = express();
 const logApp = express();
 const users = [];
-const appPort = process.env.APP_PORT || 3000;
-const logPort = process.env.LOG_PORT || 3001;
+const appPort = process.env.APP_PORT || 3001;
+const logPort = process.env.LOG_PORT || 3000;
 const logDir = process.env.LOG_DIR || '/root/.pm2/logs';
 const user = process.env.USER;
 
@@ -94,7 +94,7 @@ const log = (body) => {
   } else {
     console.log(body);
   }
-}
+};
 
 const brodcast = function(payload) {
   users.forEach((u) => {
